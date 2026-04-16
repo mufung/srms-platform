@@ -1,0 +1,63 @@
+# ============================================================
+# SRMS-1-GITIGNORE-001: Node modules - NEVER commit these
+# They are too large and are reinstalled from package.json
+# ============================================================
+node_modules/
+**/node_modules/
+
+# SRMS-1-GITIGNORE-002: Environment files - contain SECRET KEYS
+# NEVER commit these - they would expose your AWS credentials
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+
+# SRMS-1-GITIGNORE-003: Build output folders
+.next/
+dist/
+build/
+out/
+.expo/
+
+# SRMS-1-GITIGNORE-004: AWS CDK output folder
+cdk.out/
+infrastructure/dist/
+
+# SRMS-1-GITIGNORE-005: System and OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.log
+
+# SRMS-1-GITIGNORE-006: NPM debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# SRMS-1-GITIGNORE-007: AWS credential files - NEVER commit
+.aws/
+credentials
+*.pem
+*.key
+
+# SRMS-1-GITIGNORE-008: IDE configuration
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# SRMS-1-GITIGNORE-009: Test coverage reports
+coverage/
+.nyc_output/
+
+# SRMS-1-GITIGNORE-010: TypeScript compiled output
+*.js.map
+*.d.ts.map

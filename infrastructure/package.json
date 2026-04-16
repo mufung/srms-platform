@@ -1,0 +1,27 @@
+{
+  "name": "srms-infrastructure",
+  "version": "1.0.0",
+  "description": "SRMS Platform AWS CDK Infrastructure - Owner: MUFUNG ANGELBELL MBUYEH",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "deploy:master": "cdk deploy SRMS-Master --require-approval never --outputs-file ./outputs/master-outputs.json",
+    "deploy:all": "cdk deploy --all --require-approval never",
+    "destroy:tenant": "cdk destroy SRMS-Tenant-${TENANT_ID}",
+    "diff": "cdk diff",
+    "synth": "cdk synth",
+    "bootstrap": "cdk bootstrap"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "~5.4.0",
+    "aws-cdk": "2.133.0",
+    "ts-node": "^10.9.2"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.133.0",
+    "constructs": "^10.3.0",
+    "source-map-support": "^0.5.21"
+  }
+}

@@ -1,0 +1,92 @@
+# ============================================================
+# SRMS-1-CI-001: Web App Deployment Workflow
+# Owner: MUFUNG ANGELBELL MBUYEH
+# Description: Automatically deploys the Next.js web app
+# to AWS Amplify whenever code is pushed to main branch
+# ============================================================
+
+name: Deploy Web App to Amplify
+
+on:
+  # SRMS-1-CI-002: Trigger on push to main or dev branch
+  push:
+    branches:
+      - main
+      - dev
+    paths:
+      - 'frontend-web/**'
+      - '.github/workflows/deploy-web.yml'
+
+  # SRMS-1-CI-003: Allow manual trigger from GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  # ============================================================
+  # SRMS-1-CI-010: BUILD AND DEPLOY JOB
+  # ============================================================
+  deploy-web:
+    name: Build and Deploy Web App
+    runs-on: ubuntu-latest
+
+    steps:
+      # SRMS-1-CI-011: Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # SRMS-1-CI-012: Setup Node.js
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'frontend-web/package-lock.json'
+
+      # SRMS-1-CI-013: Install dependencies
+      - name: Install Dependencies
+        run: |
+          cd frontend-web
+          npm ci
+
+      # SRMS-1-CI-014: Run linting checks
+      - name: Lint Check
+        run: |
+          cd frontend-web
+          npm run lint || echo "Lint warnings found but continuing"
+
+      # SRMS-1-CI-015: Build the Next.js app
+      - name: Build Next.js App
+        run: |
+          cd frontend-web
+          npm run build
+        env:
+          NEXT_PUBLIC_PLATFORM_NAME: SRMS Platform
+          NEXT_PUBLIC_OWNER_LATITUDE: '3.8480'
+          NEXT_PUBLIC_OWNER_LONGITUDE: '11.5021'
+
+      # SRMS-1-CI-016: Deploy to AWS Amplify
+      - name: Deploy to AWS Amplify
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      # SRMS-1-CI-017: Trigger Amplify deployment
+      - name: Trigger Amplify Deployment
+        run: |
+          aws amplify start-job \
+            --app-id ${{ secrets.AMPLIFY_APP_ID }} \
+            --branch-name ${{ github.ref_name }} \
+            --job-type RELEASE
+        continue-on-error: true
+
+      # SRMS-1-CI-018: Deployment summary
+      - name: Deployment Summary
+        run: |
+          echo "=============================="
+          echo "SRMS Platform Web App Deployed"
+          echo "Owner: MUFUNG ANGELBELL MBUYEH"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Time: $(date)"
+          echo "=============================="

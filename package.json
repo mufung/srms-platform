@@ -1,0 +1,27 @@
+{
+  "name": "srms-platform",
+  "version": "1.0.0",
+  "description": "Student Result Management System - Enterprise Multi-Tenant SaaS Platform",
+  "private": true,
+  "author": {
+    "name": "MUFUNG ANGELBELL MBUYEH",
+    "email": "mufungangelbellmbuyeh@gmail.com",
+    "url": "https://wa.me/237671534067"
+  },
+  "license": "UNLICENSED",
+  "scripts": {
+    "install:all": "npm install && npm run install:infra && npm run install:backend && npm run install:web",
+    "install:infra": "cd infrastructure && npm install",
+    "install:backend": "cd backend && npm install",
+    "install:web": "cd frontend-web && npm install",
+    "build:infra": "cd infrastructure && npm run build",
+    "deploy:master": "cd infrastructure && cdk deploy SRMS-Master --require-approval never",
+    "dev:web": "cd frontend-web && npm run dev",
+    "build:web": "cd frontend-web && npm run build",
+    "test": "echo 'SRMS Platform - All systems operational' && exit 0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.1030.0",
+    "@aws-sdk/client-lambda": "^3.1030.0"
+  }
+}

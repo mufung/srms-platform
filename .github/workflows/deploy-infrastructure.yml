@@ -1,0 +1,117 @@
+# ============================================================
+# SRMS-1-CI-020: Infrastructure Deployment Workflow
+# Owner: MUFUNG ANGELBELL MBUYEH
+# Description: Deploys AWS CDK infrastructure changes
+# Only runs when infrastructure code changes
+# ============================================================
+
+name: Deploy AWS CDK Infrastructure
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'infrastructure/**'
+      - 'backend/**'
+      - '.github/workflows/deploy-infrastructure.yml'
+
+  # SRMS-1-CI-021: Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      target_stack:
+        description: 'Which stack to deploy (SRMS-Master or SRMS-Tenant-<id>)'
+        required: false
+        default: 'SRMS-Master'
+
+jobs:
+  # ============================================================
+  # SRMS-1-CI-030: CDK DIFF (Preview changes before deploying)
+  # ============================================================
+  cdk-diff:
+    name: Preview Infrastructure Changes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install CDK Dependencies
+        run: cd infrastructure && npm ci
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: CDK Diff (Show What Will Change)
+        run: |
+          cd infrastructure
+          npx cdk diff SRMS-Master 2>&1 || echo "Diff complete"
+
+  # ============================================================
+  # SRMS-1-CI-040: CDK DEPLOY
+  # ============================================================
+  cdk-deploy:
+    name: Deploy Infrastructure
+    runs-on: ubuntu-latest
+    needs: cdk-diff
+    if: github.ref == 'refs/heads/main'
+    environment: production
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install CDK Dependencies
+        run: cd infrastructure && npm ci
+
+      - name: Build CDK TypeScript
+        run: cd infrastructure && npm run build
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      # SRMS-1-CI-041: Deploy the Master Stack
+      - name: Deploy SRMS Master Stack
+        run: |
+          cd infrastructure
+          npx cdk deploy SRMS-Master \
+            --require-approval never \
+            --outputs-file ./outputs/master-outputs.json \
+            2>&1
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+
+      # SRMS-1-CI-042: Save outputs as artifacts
+      - name: Save CDK Outputs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cdk-outputs-${{ github.sha }}
+          path: infrastructure/outputs/
+
+      - name: Deployment Summary
+        run: |
+          echo "=============================="
+          echo "SRMS Infrastructure Deployed"
+          echo "Owner: MUFUNG ANGELBELL MBUYEH"
+          echo "Stack: SRMS-Master"
+          echo "Commit: ${{ github.sha }}"
+          echo "Time: $(date)"
+          echo "=============================="

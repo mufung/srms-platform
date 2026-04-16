@@ -1,0 +1,43 @@
+{
+  "app": "npx ts-node --prefer-ts-exts bin/app.ts",
+  "watch": {
+    "include": ["**"],
+    "exclude": [
+      "README.md",
+      "cdk*.json",
+      "**/*.d.ts",
+      "**/*.js",
+      "tsconfig.json",
+      "package*.json",
+      "node_modules",
+      "dist",
+      "outputs"
+    ]
+  },
+  "context": {
+    "@aws-cdk/aws-lambda:recognizeLayerVersion": true,
+    "@aws-cdk/core:checkSecretUsage": true,
+    "@aws-cdk/aws-lambda-nodejs:useLatestRuntimeVersion": true,
+    "@aws-cdk/aws-ec2:ebsDefaultGp3Volume": true,
+    "@aws-cdk/aws-ecs:removeDefaultDeploymentAlarm": true,
+    "@aws-cdk/custom-resources:installLatestAwsSdkDefault": false,
+    "@aws-cdk/aws-s3:keepNotificationInImportedBucket": false,
+    "masterConfig": {
+      "ownerName": "MUFUNG ANGELBELL MBUYEH",
+      "ownerEmail": "mufungangelbellmbuyeh@gmail.com",
+      "ownerPhone": "+237671534067",
+      "ownerWhatsApp": "https://wa.me/237671534067",
+      "ownerTitle": "AWS Solutions Architect",
+      "ownerLocation": "Yaoundé, Cameroon Northwest",
+      "ownerLatitude": 3.8480,
+      "ownerLongitude": 11.5021,
+      "platformName": "SRMS Platform",
+      "platformVersion": "1.0.0",
+      "platformYear": "2026",
+      "adminSessionTimeoutSeconds": 7200,
+      "dataRetentionDaysAfterSuspension": 90,
+      "paymentGracePeriodDays": 7,
+      "freeTrialDays": 14
+    }
+  }
+}
