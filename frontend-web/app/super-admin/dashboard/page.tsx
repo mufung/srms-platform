@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 interface School {
   tenantId: string; name: string; shortCode: string;
-  region: string; plan: string; status: string;
+  region: string; country: string; plan: string; status: string;
   students: number; teachers: number; parents: number; admins: number;
   monthlyUSD: string; monthlyXAF: number;
   registeredAt: string; lastPayment: string;
