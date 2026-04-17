@@ -214,7 +214,7 @@ export default function TrackComplaintsPage() {
                     ['Proof Attached',selected.hasProof?'Yes — uploaded':'No'],
                     ['Submitted',timeAgo(selected.createdAt)],
                     selected.resolvedAt?['Resolved',timeAgo(selected.resolvedAt)]:null,
-                  ].filter(Boolean).map(([label,value],i)=>(
+                  ].filter((item): item is [string, string] => item !== null).map(([label, value], i) => (
                     <div key={i} style={{display:'flex',justifyContent:'space-between',padding:'10px 0',borderBottom:'1px solid rgba(255,255,255,0.05)'}}>
                       <span style={{color:'#64748b',fontSize:13}}>{label}</span>
                       <span style={{color:label==='Corrected To'?'#34d399':label==='Score on Record'?'#f87171':'white',fontSize:13,fontWeight:label==='Complaint ID'?700:400,fontFamily:label==='Complaint ID'?'monospace':'inherit'}}>{value}</span>
