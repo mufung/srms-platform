@@ -1,0 +1,12 @@
+# Static assets - serve as-is
+/_next/*  /_next/:splat  200
+/*.js     /:splat.js      200
+/*.css    /:splat.css     200
+/*.png    /:splat.png     200
+/*.jpg    /:splat.jpg     200
+/*.svg    /:splat.svg     200
+/*.ico    /:splat.ico     200
+/*.json   /:splat.json    200
+
+# All other routes - SPA fallback
+/*        /index.html     200
